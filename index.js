@@ -57,15 +57,15 @@ async function run() {
 
     //middweares
 
-    const verifyToken = (req, res, next) =>{
-      console.log('inside verify token' , req.headers.authorization);
-      if(!req.headers.authorization){
-        return res.status(401).send({message : 'unauthorized access '})
+    const verifyToken = (req, res, next) => {
+      console.log('inside verify token', req.headers.authorization);
+      if (!req.headers.authorization) {
+        return res.status(401).send({ message: 'unauthorized access ' })
       }
       const token = req.headers.authorization.split(' ')[1];
-      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) =>{
-        if(err){
-          return res.status(401).send({message: 'unauthorized access'})
+      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+          return res.status(401).send({ message: 'unauthorized access' })
         }
         req.decoded = decoded;
         next();
@@ -162,6 +162,19 @@ async function run() {
       const result = await menuCollection.find().toArray();
       res.send(result);
     })
+
+    app.post('/menu', verifyToken, verifyAdmin, async (req, res) => {
+      const item = req.body;
+      const result = await menuCollection.insertOne(item);
+      res.send(result);
+    });
+
+
+
+
+
+
+
 
     //get all reviews
 
